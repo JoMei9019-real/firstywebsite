@@ -26,9 +26,10 @@ function inline(source, base) {
 }
 export function markdown(source, base) {
   const lines = String(source || t('No release notes were provided for this version.')).replace(/\r/g, '').split('\n');
-  let html = '', paragraph = [], list = '', code = null;
+  let html = '', paragraph = [], list = '', itemLines = [], code = null;
   const flush = () => { if (paragraph.length) { html += `<p>${inline(paragraph.join(' '), base)}</p>`; paragraph = []; } };
-  const closeList = () => { if (list) { html += `</${list}>`; list = ''; } };
+  const flushItem = () => { if (itemLines.length) { html += `<li>${inline(itemLines.join(' '), base)}</li>`; itemLines = []; } };
+  const closeList = () => { flushItem(); if (list) { html += `</${list}>`; list = ''; } };
   for (const line of lines) {
     if (/^\s*```/.test(line)) {
       flush(); closeList();
@@ -44,9 +45,11 @@ export function markdown(source, base) {
     else if (item) {
       flush(); const next = item[1] ? 'ul' : 'ol';
       if (list !== next) { closeList(); html += `<${next}>`; list = next; }
-      html += `<li>${inline(item[2], base)}</li>`;
+      else flushItem();
+      itemLines = [item[2]];
     } else if (/^>\s?/.test(line)) { flush(); closeList(); html += `<blockquote>${inline(line.replace(/^>\s?/, ''), base)}</blockquote>`; }
-    else { closeList(); paragraph.push(line); }
+    else if (list) itemLines.push(line.trim());
+    else paragraph.push(line);
   }
   flush(); closeList();
   if (code !== null) html += `<pre><code>${escapeHTML(code.join('\n'))}</code></pre>`;

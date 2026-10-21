@@ -64,3 +64,13 @@ test('small checksums show their real size in bytes', () => {
   assert.equal(formatBytes(86), '86 B');
   assert.equal(formatBytes(2048), '2 KB');
 });
+
+test('wrapped GitHub release bullets remain complete list items', () => {
+  const notes = '## Changes\n\n- Deferred RX processing to fix the\n  observed `flush_work` sleep deadlock.\n- Fence timers and queues while\n  suspended and resume only when powered.\n\nFollow the installation guide.';
+  const html = markdown(notes);
+  assert.equal((html.match(/<ul>/g) || []).length, 1);
+  assert.equal((html.match(/<li>/g) || []).length, 2);
+  assert.match(html, /<li>Deferred RX processing to fix the observed <code>flush_work<\/code> sleep deadlock\.<\/li>/);
+  assert.match(html, /<li>Fence timers and queues while suspended and resume only when powered\.<\/li>/);
+  assert.match(html, /<p>Follow the installation guide\.<\/p>/);
+});

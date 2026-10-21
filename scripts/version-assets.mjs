@@ -7,7 +7,7 @@ import { resolve } from 'node:path';
 const root = resolve(import.meta.dirname, '..');
 const assets = resolve(root, 'assets');
 const files = (await readdir(assets, { withFileTypes: true }))
-  .filter(file => file.isFile() && /\.(js|css|svg)$/.test(file.name))
+  .filter(file => file.isFile() && /\.(js|css|svg|png|ico)$/.test(file.name))
   .map(file => file.name).sort();
 const hash = createHash('sha256');
 const sources = new Map();
@@ -23,7 +23,7 @@ for (const [file, source] of sources) await writeFile(resolve(directory, file), 
 for (const page of ['index.html', 'beta/index.html']) {
   const path = resolve(root, page);
   const html = await readFile(path, 'utf8');
-  const updated = html.replace(/((?:\.\.\/)?assets\/)(?:releases\/[a-f0-9]+\/)?([\w.-]+\.(?:js|css|svg))/g,
+  const updated = html.replace(/((?:\.\.\/)?assets\/)(?:releases\/[a-f0-9]+\/)?([\w.-]+\.(?:js|css|svg|png|ico))/g,
     (_, prefix, filename) => `${prefix}releases/${version}/${filename}`);
   await writeFile(path, updated);
 }

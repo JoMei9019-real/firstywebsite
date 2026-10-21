@@ -5,7 +5,7 @@ import { readdir, readFile } from 'node:fs/promises';
 const root = new URL('../', import.meta.url);
 test('published pages share one immutable asset version matching current sources', async () => {
   const names = (await readdir(new URL('assets/', root), { withFileTypes: true }))
-    .filter(file => file.isFile() && /\.(js|css|svg)$/.test(file.name)).map(file => file.name).sort();
+    .filter(file => file.isFile() && /\.(js|css|svg|png|ico)$/.test(file.name)).map(file => file.name).sort();
   const versions = new Set();
   for (const page of ['index.html', 'beta/index.html']) {
     const url = new URL(page, root);

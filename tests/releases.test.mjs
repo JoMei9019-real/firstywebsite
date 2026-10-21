@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { stableReleases, primaryAsset, releaseAssets, betaBuilds, isExpired, artifactURL } from '../assets/github.js';
+import { stableReleases, primaryAsset, releaseAssets, betaBuilds, isExpired, artifactURL, formatBytes } from '../assets/github.js';
 import { markdown, safeURL } from '../assets/shared.js';
 
 test('release history excludes drafts and prereleases and orders publication dates', () => {
@@ -58,4 +58,9 @@ test('release Markdown keeps readable lists, links, strong text and code', () =>
   assert.match(html, /<ul>/);
   assert.match(html, /blob\/v2\/RELEASE.md/);
   assert.match(html, /<pre><code>sudo rtw88ctl status<\/code><\/pre>/);
+});
+
+test('small checksums show their real size in bytes', () => {
+  assert.equal(formatBytes(86), '86 B');
+  assert.equal(formatBytes(2048), '2 KB');
 });

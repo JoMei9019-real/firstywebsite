@@ -80,6 +80,7 @@ export function artifactURL(runId, artifactId) {
   return `${repoURL('AirPort-RTW')}/actions/runs/${Number(runId)}/artifacts/${Number(artifactId)}`;
 }
 export function formatBytes(bytes) {
+  if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
   return `${(bytes / (1024 * 1024)).toLocaleString('de-DE', { maximumFractionDigits: 1 })} MB`;
 }

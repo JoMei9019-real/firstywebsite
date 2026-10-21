@@ -36,15 +36,15 @@ async function load(force = false, append = false) {
   busy = true; refresh.disabled = true; older.disabled = true;
   const nextPage = append ? page + 1 : 1;
   const queries = [
-    append && !moreRuns ? Promise.resolve(null) : github(`/AirPort-RTW/actions/workflows/native-build.yml/runs?per_page=100&page=${nextPage}`, { force }),
-    append && !moreArtifacts ? Promise.resolve(null) : github(`/AirPort-RTW/actions/artifacts?per_page=100&page=${nextPage}`, { force }),
+    append && !moreRuns ? Promise.resolve(null) : github(`/AirPort-RTW/actions/workflows/native-build.yml/runs?per_page=20&page=${nextPage}`, { force }),
+    append && !moreArtifacts ? Promise.resolve(null) : github(`/AirPort-RTW/actions/artifacts?per_page=20&page=${nextPage}`, { force }),
   ];
   try {
     const [runResult, artifactResult] = await Promise.all(queries);
     runs = append ? mergeById(runs, runResult?.data.workflow_runs || []) : runResult.data.workflow_runs;
     artifacts = append ? mergeById(artifacts, artifactResult?.data.artifacts || []) : artifactResult.data.artifacts;
-    if (runResult) moreRuns = runResult.data.workflow_runs.length === 100;
-    if (artifactResult) moreArtifacts = artifactResult.data.artifacts.length === 100;
+    if (runResult) moreRuns = runResult.data.workflow_runs.length === 20;
+    if (artifactResult) moreArtifacts = artifactResult.data.artifacts.length === 20;
     page = nextPage;
     builds = betaBuilds(runs, artifacts);
     if (branch !== 'all' && !builds.some(b => b.run.head_branch === branch)) branch = 'all';

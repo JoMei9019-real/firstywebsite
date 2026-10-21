@@ -1,3 +1,4 @@
+import { t, locale } from './i18n.js';
 export const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 export function safeURL(value, base = 'https://github.com/') {
   try {
@@ -6,7 +7,7 @@ export function safeURL(value, base = 'https://github.com/') {
   } catch { return '#'; }
 }
 export function date(value, options = {}) {
-  return new Date(value).toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric', ...options });
+  return new Date(value).toLocaleDateString(locale(), { day: 'numeric', month: 'long', year: 'numeric', ...options });
 }
 export const arrow = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"/></svg>';
 export const download = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M5 16v5h14v-5"/></svg>';
@@ -24,7 +25,7 @@ function inline(source, base) {
   return text.replace(/\u0000(\d+)\u0000/g, (_, i) => tokens[Number(i)]);
 }
 export function markdown(source, base) {
-  const lines = String(source || 'Für diese Version wurden keine Release Notes hinterlegt.').replace(/\r/g, '').split('\n');
+  const lines = String(source || t('No release notes were provided for this version.')).replace(/\r/g, '').split('\n');
   let html = '', paragraph = [], list = '', code = null;
   const flush = () => { if (paragraph.length) { html += `<p>${inline(paragraph.join(' '), base)}</p>`; paragraph = []; } };
   const closeList = () => { if (list) { html += `</${list}>`; list = ''; } };
@@ -57,7 +58,7 @@ export function initTheme() {
   const root = document.documentElement;
   const update = () => {
     const light = root.dataset.theme === 'light';
-    button?.setAttribute('aria-label', light ? 'Dunkles Design aktivieren' : 'Helles Design aktivieren');
+    button?.setAttribute('aria-label', light ? t('Enable dark theme') : t('Enable light theme'));
     button?.setAttribute('aria-pressed', String(light));
   };
   button?.addEventListener('click', () => {
@@ -65,6 +66,7 @@ export function initTheme() {
     try { localStorage.setItem('jomei-theme', root.dataset.theme); } catch { /* Optional */ }
     update();
   });
+  document.addEventListener('languagechange', update);
   update();
   const year = document.querySelector('[data-year]');
   if (year) year.textContent = new Date().getFullYear();

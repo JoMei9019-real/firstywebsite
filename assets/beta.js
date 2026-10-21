@@ -1,5 +1,7 @@
 import { github, repoURL, betaBuilds, isExpired, artifactURL, formatBytes } from './github.js';
 import { escapeHTML as e, safeURL, date, download, arrow, initTheme } from './shared.js';
+import { t, time, errorMessage, initLanguage } from './i18n.js';
+initLanguage();
 initTheme();
 const list = document.querySelector('#build-list');
 const status = document.querySelector('#beta-status');
@@ -9,24 +11,31 @@ const older = document.querySelector('#load-older');
 const refresh = document.querySelector('#refresh-builds');
 const range = document.querySelector('#build-range');
 let runs = [], artifacts = [], builds = [], branch = 'all', busy = false, page = 1, moreRuns = false, moreArtifacts = false;
+let lastSync = null, lastError = null;
 const root = repoURL('AirPort-RTW');
 
+function renderStatus() {
+  status.classList.toggle('warning', Boolean(lastError || lastSync?.stale));
+  status.textContent = lastError ? errorMessage(lastError) : lastSync?.stale ? t('Cached data. Live updates from GitHub are currently unavailable.') : lastSync ? t('Checked GitHub · {time}', { time: time(lastSync.time) }) : t('Checking test builds on GitHub …');
+}
 function renderFilters() {
   const branches = [...new Set(builds.map(b => b.run.head_branch))].sort();
-  filters.innerHTML = `<button class="${branch === 'all' ? 'active' : ''}" data-branch="all" aria-pressed="${branch === 'all'}">Alle Zweige</button>` + branches.map(b => `<button class="${branch === b ? 'active' : ''}" data-branch="${e(b)}" aria-pressed="${branch === b}">${e(b)}</button>`).join('');
+  filters.innerHTML = `<button class="${branch === 'all' ? 'active' : ''}" data-branch="all" aria-pressed="${branch === 'all'}">${t('All branches')}</button>` + branches.map(b => `<button class="${branch === b ? 'active' : ''}" data-branch="${e(b)}" aria-pressed="${branch === b}">${e(b)}</button>`).join('');
 }
 function render() {
   const query = search.value.toLowerCase().trim();
   const visible = builds.filter(b => (branch === 'all' || b.run.head_branch === branch) && `${b.run.display_title} ${b.run.head_sha} ${b.run.head_branch} ${b.artifacts.map(a => a.name).join(' ')}`.toLowerCase().includes(query));
   list.setAttribute('aria-busy', 'false');
-  if (!visible.length) {
-    list.innerHTML = `<div class="release-placeholder"><span class="empty-symbol">⌁</span><h3>${builds.length ? 'Keine passenden Builds.' : 'Noch keine passenden Artifacts verfügbar.'}</h3><p>${builds.length ? 'Probiere eine andere Suche oder einen anderen Entwicklungszweig.' : 'Sobald ein erfolgreicher Beta-Build ein AirPortRTW-Artifact erzeugt, findest du es hier.'}</p><a class="button secondary" href="${root}/actions/workflows/native-build.yml" target="_blank" rel="noopener noreferrer">Workflow auf GitHub ${arrow}</a></div>`;
+  if (lastError && !builds.length) {
+    list.innerHTML = `<div class="release-placeholder"><span class="empty-symbol">↗</span><h3>${t('Could not load the builds.')}</h3><p>${e(errorMessage(lastError))}</p><a class="button secondary" href="${root}/actions/workflows/native-build.yml" target="_blank" rel="noopener noreferrer">${t('Open GitHub Actions')} ${arrow}</a></div>`;
+  } else if (!visible.length) {
+    list.innerHTML = `<div class="release-placeholder"><span class="empty-symbol">⌁</span><h3>${t(builds.length ? 'No matching builds.' : 'No matching artifacts available yet.')}</h3><p>${t(builds.length ? 'Try a different search or development branch.' : 'Successful beta builds will appear here when they produce an AirPortRTW artifact.')}</p><a class="button secondary" href="${root}/actions/workflows/native-build.yml" target="_blank" rel="noopener noreferrer">${t('View workflow on GitHub')} ${arrow}</a></div>`;
   } else list.innerHTML = visible.map(({ run, artifacts: files }) => files.map(a => {
     const expired = isExpired(a);
-    return `<article class="build-card"><div class="build-header"><div><span class="release-badge">${e(run.head_branch)}</span><h2>${e(a.name)}</h2><div class="build-meta"><span>${e(date(a.created_at))}</span><span>·</span><span>${formatBytes(a.size_in_bytes)}</span><span>·</span><a href="${root}/commit/${e(run.head_sha)}" target="_blank" rel="noopener noreferrer">${e(run.head_sha?.slice(0, 7))} ↗</a></div></div>${expired ? '<span class="expired-label">Artifact abgelaufen</span>' : `<a class="button primary" href="${artifactURL(run.id, a.id)}" target="_blank" rel="noopener noreferrer">${download} Artifact herunterladen</a>`}</div><p class="build-commit"><strong>Änderung:</strong> ${e(run.display_title || run.head_commit?.message?.split('\n')[0] || 'Build ohne Beschreibung')}</p><div class="build-footer"><div>${expired ? 'Abgelaufen am' : 'Verfügbar bis'} ${e(date(a.expires_at))} · GitHub-Anmeldung erforderlich</div><a class="text-link" href="${e(safeURL(run.html_url))}" target="_blank" rel="noopener noreferrer">Build & Änderungen ansehen ${arrow}</a></div></article>`;
+    return `<article class="build-card"><div class="build-header"><div><span class="release-badge">${e(run.head_branch)}</span><h2>${e(a.name)}</h2><div class="build-meta"><span>${e(date(a.created_at))}</span><span>·</span><span>${formatBytes(a.size_in_bytes)}</span><span>·</span><a href="${root}/commit/${e(run.head_sha)}" target="_blank" rel="noopener noreferrer">${e(run.head_sha?.slice(0, 7))} ↗</a></div></div>${expired ? `<span class="expired-label">${t('Artifact expired')}</span>` : `<a class="button primary" href="${artifactURL(run.id, a.id)}" target="_blank" rel="noopener noreferrer">${download} ${t('Download artifact')}</a>`}</div><p class="build-commit"><strong>${t('Change:')}</strong> ${e(run.display_title || run.head_commit?.message?.split('\n')[0] || t('Build without a description'))}</p><div class="build-footer"><div>${t(expired ? 'Expired on' : 'Available until')} ${e(date(a.expires_at))} · ${t('GitHub sign-in required')}</div><a class="text-link" href="${e(safeURL(run.html_url))}" target="_blank" rel="noopener noreferrer">${t('View build & changes')} ${arrow}</a></div></article>`;
   }).join('')).join('');
   older.hidden = !(moreRuns || moreArtifacts);
-  range.textContent = `${visible.length} von ${builds.length} Builds · Neueste zuerst`;
+  range.textContent = t('{visible} of {total} builds · Newest first', { visible: visible.length, total: builds.length });
 }
 function mergeById(previous, next) {
   return [...new Map([...previous, ...next].map(item => [item.id, item])).values()];
@@ -48,14 +57,12 @@ async function load(force = false, append = false) {
     page = nextPage;
     builds = betaBuilds(runs, artifacts);
     if (branch !== 'all' && !builds.some(b => b.run.head_branch === branch)) branch = 'all';
-    const stale = runResult?.stale || artifactResult?.stale;
-    status.classList.toggle('warning', Boolean(stale));
-    status.textContent = stale ? 'Gespeicherter Stand. Der Live-Abgleich mit GitHub ist gerade nicht möglich.' : `Mit GitHub abgeglichen · ${new Date(runResult?.time || artifactResult?.time).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}`;
-    renderFilters(); render();
+    lastSync = { stale: runResult?.stale || artifactResult?.stale, time: runResult?.time || artifactResult?.time };
+    lastError = null;
+    renderStatus(); renderFilters(); render();
   } catch (error) {
-    status.textContent = error.message; status.classList.add('warning');
-    list.setAttribute('aria-busy', 'false');
-    if (!builds.length) list.innerHTML = `<div class="release-placeholder"><span class="empty-symbol">↗</span><h3>Die Builds konnten nicht geladen werden.</h3><p>${e(error.message)}</p><a class="button secondary" href="${root}/actions/workflows/native-build.yml" target="_blank" rel="noopener noreferrer">GitHub Actions öffnen ${arrow}</a></div>`;
+    lastError = error;
+    renderStatus(); render();
   } finally { busy = false; refresh.disabled = false; older.disabled = false; }
 }
 filters.addEventListener('click', event => {
@@ -66,6 +73,10 @@ filters.addEventListener('click', event => {
 search.addEventListener('input', render);
 refresh.addEventListener('click', () => load(true));
 older.addEventListener('click', () => load(false, true));
+document.addEventListener('languagechange', () => {
+  renderStatus(); renderFilters();
+  if (lastSync || lastError) render();
+});
 load();
 setInterval(() => { if (!document.hidden) load(); }, 10 * 60 * 1000);
 setInterval(() => { if (builds.length && !document.hidden) render(); }, 60000);

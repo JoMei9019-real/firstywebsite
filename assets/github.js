@@ -1,9 +1,15 @@
+import { locale, errorMessage } from './i18n.js';
 export const OWNER = 'JoMei9019-real';
 export const PROJECTS = {
   airport: { repo: 'AirPort-RTW', name: 'AirPort-RTW', label: 'Native macOS Wi-Fi' },
-  feixiao: { repo: 'Feixiao', name: 'Feixiao', label: 'Realtek, unter deiner Kontrolle' },
+  feixiao: { repo: 'Feixiao', name: 'Feixiao', label: 'Realtek, under your control' },
 };
 export const repoURL = repo => `https://github.com/${OWNER}/${repo}`;
+function apiError(code, parameters = {}) {
+  const error = Object.assign(new Error(), { code, ...parameters });
+  error.message = errorMessage(error);
+  return error;
+}
 const TTL = 10 * 60 * 1000;
 const pending = new Map();
 const memory = new Map();
@@ -19,14 +25,14 @@ function writeCache(key, value) {
 }
 
 export async function github(path, { force = false } = {}) {
-  if (!/^\/[A-Za-z0-9_.\-/]+(?:\?[A-Za-z0-9_=&.%\-]+)?$/.test(path)) throw new Error('Ungültige GitHub-Anfrage.');
+  if (!/^\/[A-Za-z0-9_.\-/]+(?:\?[A-Za-z0-9_=&.%\-]+)?$/.test(path)) throw apiError('invalid-request');
   const key = `jomei-github-v1:${path}`;
   const cached = readCache(key);
   if (!force && cached && Date.now() - cached.time < TTL) return { ...cached, stale: false };
   if (pending.has(key)) return pending.get(key);
   const request = (async () => {
     try {
-      if (Date.now() < retryAfter) throw new Error(`GitHub-Limit erreicht. Erneut versuchen ab ${new Date(retryAfter).toLocaleTimeString('de-DE')}.`);
+      if (Date.now() < retryAfter) throw apiError('rate-limit', { retryAt: retryAfter });
       const response = await fetch(`https://api.github.com/repos/${OWNER}${path}`, {
         headers: { Accept: 'application/vnd.github+json' },
         signal: AbortSignal.timeout(15000),
@@ -35,19 +41,19 @@ export async function github(path, { force = false } = {}) {
         const reset = Number(response.headers.get('x-ratelimit-reset')) * 1000;
         const delay = Number(response.headers.get('retry-after')) * 1000;
         retryAfter = Math.max(Date.now() + (delay || 60000), reset || 0);
-        throw new Error(`GitHub-Limit erreicht. Erneut versuchen ab ${new Date(retryAfter).toLocaleTimeString('de-DE')}.`);
+        throw apiError('rate-limit', { retryAt: retryAfter });
       }
       if (!response.ok) {
-        const error = new Error(response.status === 404 ? 'Auf GitHub noch nicht verfügbar.' : `GitHub ist gerade nicht erreichbar (${response.status}).`);
-        error.status = response.status;
+        const error = apiError(response.status === 404 ? 'not-found' : 'http', { status: response.status });
         throw error;
       }
       const result = { data: await response.json(), time: Date.now(), stale: false };
       writeCache(key, result);
       return result;
     } catch (error) {
-      if (cached && error.status !== 404) return { ...cached, stale: true, warning: error.message };
-      throw error;
+      const failure = error.code ? error : apiError('network');
+      if (cached && error.status !== 404) return { ...cached, stale: true, warning: { code: failure.code, status: failure.status, retryAt: failure.retryAt } };
+      throw failure;
     } finally { pending.delete(key); }
   })();
   pending.set(key, request);
@@ -82,5 +88,5 @@ export function artifactURL(runId, artifactId) {
 export function formatBytes(bytes) {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-  return `${(bytes / (1024 * 1024)).toLocaleString('de-DE', { maximumFractionDigits: 1 })} MB`;
+  return `${(bytes / (1024 * 1024)).toLocaleString(locale(), { maximumFractionDigits: 1 })} MB`;
 }

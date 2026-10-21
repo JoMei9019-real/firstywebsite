@@ -13,6 +13,14 @@ The website is buildless HTML, CSS and JavaScript. Serve the repository root on 
 
 Relative asset URLs support both the custom domain and the GitHub Pages repository subpath.
 
+## Languages
+
+English is the default, including the static HTML served without JavaScript. The compact **EN / DE** selector in the homepage and beta headers switches between English and German immediately. The choice is stored as `jomei-language` and applies across pages and return visits; disabled browser storage falls back gracefully.
+
+`assets/i18n.js` contains the German translations, locale-aware formatting and language selection. Static text, page metadata, accessibility labels, theme controls and API error messages are translated. Dynamic release and artifact interfaces rerender in the selected language without another API request or losing the selected project/version or beta search/filter. Release notes, commit titles, versions and filenames remain as published on GitHub.
+
+When adding interface text, use English in the HTML, add the German equivalent to `GERMAN`, and use `t()` for dynamically rendered strings. Keep placeholder names identical between both languages.
+
 ## Automatic release updates
 
 `assets/github.js` is the data layer. Public GitHub REST API requests read releases from:

@@ -1,10 +1,13 @@
 import { PROJECTS, github, repoURL, stableReleases, releaseAssets, primaryAsset, formatBytes } from './github.js';
 import { escapeHTML as e, safeURL, date, markdown, download, arrow, initTheme } from './shared.js';
+import { t, time, errorMessage, initLanguage } from './i18n.js';
 
+initLanguage();
 initTheme();
 const states = {};
 let selected = 'airport';
 let loading = false;
+let historyError = null;
 const selector = document.querySelector('#version-select');
 const detail = document.querySelector('#release-detail');
 const more = document.querySelector('#history-more');
@@ -16,17 +19,17 @@ function renderCard(key) {
   const target = document.querySelector(`[data-download="${key}"]`);
   const repo = repoURL(PROJECTS[key].repo);
   if (!state?.latest) {
-    badge.textContent = state?.error ? 'GitHub prüfen' : 'Noch kein Release';
-    target.innerHTML = `<a class="button secondary full" href="${repo}/releases" target="_blank" rel="noopener noreferrer">Releases auf GitHub ${arrow}</a><p class="download-meta">${e(state?.error || 'Sobald ein Release erscheint, findest du es hier.')}</p>`;
+    badge.textContent = t(state?.error ? 'Check GitHub' : 'No release yet');
+    target.innerHTML = `<a class="button secondary full" href="${repo}/releases" target="_blank" rel="noopener noreferrer">${t('Releases on GitHub')} ${arrow}</a><p class="download-meta">${e(state?.error ? errorMessage(state.error) : t('Published releases will appear here.'))}</p>`;
     return;
   }
   const release = state.latest;
   const asset = primaryAsset(release);
   badge.innerHTML = `<span class="status-dot"></span>${e(release.tag_name)}`;
   target.innerHTML = asset
-    ? `<a class="button ${key === 'airport' ? 'primary' : 'blue-button'} full" href="${e(safeURL(asset.browser_download_url))}">${download} ${e(PROJECTS[key].name)} herunterladen <span class="button-end">↓</span></a><p class="download-meta">${e(release.tag_name)} <span>·</span> ${formatBytes(asset.size)} <span>·</span> ${e(date(release.published_at))}</p>`
-    : `<a class="button secondary full" href="${e(safeURL(release.html_url))}" target="_blank" rel="noopener noreferrer">Release öffnen ${arrow}</a><p class="download-meta">${e(release.tag_name)} · Für dieses Release ist keine fertige Download-Datei hinterlegt.</p>`;
-  if (state.stale) target.insertAdjacentHTML('beforeend', `<p class="cache-warning">Zwischengespeicherter Stand vom ${e(date(state.time))}. Aktuell auf GitHub prüfen.</p>`);
+    ? `<a class="button ${key === 'airport' ? 'primary' : 'blue-button'} full" href="${e(safeURL(asset.browser_download_url))}">${download} ${e(t('Download {project}', { project: PROJECTS[key].name }))} <span class="button-end">↓</span></a><p class="download-meta">${e(release.tag_name)} <span>·</span> ${formatBytes(asset.size)} <span>·</span> ${e(date(release.published_at))}</p>`
+    : `<a class="button secondary full" href="${e(safeURL(release.html_url))}" target="_blank" rel="noopener noreferrer">${t('View release')} ${arrow}</a><p class="download-meta">${e(release.tag_name)} · ${t('No ready-to-download file is attached to this release.')}</p>`;
+  if (state.stale) target.insertAdjacentHTML('beforeend', `<p class="cache-warning">${e(t('Cached data from {date}. Check GitHub for the latest version.', { date: date(state.time) }))}</p>`);
 }
 function selectedRelease() {
   const state = states[selected];
@@ -37,29 +40,30 @@ function renderDetail() {
   const release = selectedRelease();
   detail.setAttribute('aria-busy', String(!state));
   if (!release) {
-    detail.innerHTML = `<div class="release-placeholder"><span class="empty-symbol">↗</span><h3>${state?.error ? 'GitHub ist gerade nicht erreichbar.' : 'Noch keine veröffentlichten Releases.'}</h3><p>${e(state?.error || 'Hier erscheinen die Release Notes, sobald sie veröffentlicht werden.')}</p><a class="button secondary" href="${repoURL(PROJECTS[selected].repo)}/releases" target="_blank" rel="noopener noreferrer">Auf GitHub ansehen ${arrow}</a></div>`;
+    detail.innerHTML = `<div class="release-placeholder"><span class="empty-symbol">↗</span><h3>${t(state?.error ? 'GitHub is currently unavailable.' : 'No published releases yet.')}</h3><p>${e(state?.error ? errorMessage(state.error) : t('Release notes will appear here once published.'))}</p><a class="button secondary" href="${repoURL(PROJECTS[selected].repo)}/releases" target="_blank" rel="noopener noreferrer">${t('View on GitHub')} ${arrow}</a></div>`;
     return;
   }
   const files = releaseAssets(release);
   const base = `${repoURL(PROJECTS[selected].repo)}/blob/${encodeURIComponent(release.tag_name)}/`;
-  detail.innerHTML = `<div class="release-detail-heading"><div><p class="eyebrow">${e(PROJECTS[selected].name)} <span class="stable-label">STABLE</span></p><h3>${e(release.tag_name)}</h3><p class="muted">Veröffentlicht am ${e(date(release.published_at))}</p></div><a class="icon-button" href="${e(safeURL(release.html_url))}" target="_blank" rel="noopener noreferrer" aria-label="Release auf GitHub öffnen">${arrow}</a></div><div class="release-markdown">${markdown(release.body, base)}</div><div class="release-files"><h4>Downloads <span>${files.length}</span></h4>${files.length ? files.map(a => `<a class="file-link" href="${e(safeURL(a.browser_download_url))}">${download}<span>${e(a.name)}</span><small>${formatBytes(a.size)}</small></a>`).join('') : '<p class="muted">Keine fertigen Dateien für diese Version. Quellcode und Details findest du auf GitHub.</p>'}</div>`;
+  detail.innerHTML = `<div class="release-detail-heading"><div><p class="eyebrow">${e(PROJECTS[selected].name)} <span class="stable-label">STABLE</span></p><h3>${e(release.tag_name)}</h3><p class="muted">${e(t('Published on {date}', { date: date(release.published_at) }))}</p></div><a class="icon-button" href="${e(safeURL(release.html_url))}" target="_blank" rel="noopener noreferrer" aria-label="${t('Open release on GitHub')}">${arrow}</a></div><p class="release-original-note">${t('Release notes are shown as published on GitHub.')}</p><div class="release-markdown">${markdown(release.body, base)}</div><div class="release-files"><h4>${t('Downloads')} <span>${files.length}</span></h4>${files.length ? files.map(a => `<a class="file-link" href="${e(safeURL(a.browser_download_url))}">${download}<span>${e(a.name)}</span><small>${formatBytes(a.size)}</small></a>`).join('') : `<p class="muted">${t('No files for this version. Find the source code and details on GitHub.')}</p>`}</div>`;
 }
 function renderExplorer(keepSelection = false) {
   const old = selector.value;
   const state = states[selected];
   const releases = state?.releases || [];
-  selector.innerHTML = releases.length ? releases.map(r => `<option value="${e(r.id)}">${e(r.tag_name)}${r.id === state.latest?.id ? ' — Aktuell' : ''}</option>`).join('') : '<option>Keine Version verfügbar</option>';
+  selector.innerHTML = releases.length ? releases.map(r => `<option value="${e(r.id)}">${e(r.tag_name)}${r.id === state.latest?.id ? t(' — Latest') : ''}</option>`).join('') : `<option>${t('No version available')}</option>`;
   selector.disabled = !releases.length;
   if (keepSelection && releases.some(r => String(r.id) === old)) selector.value = old;
   else if (state?.latest) selector.value = String(state.latest.id);
   more.hidden = !state?.hasMore;
   const sync = document.querySelector('#sync-status');
-  sync.classList.toggle('warning', Boolean(state?.stale || state?.error));
-  sync.textContent = state?.error || (state?.stale ? `Gespeicherter Stand · ${state.warning || 'Live-Abgleich fehlgeschlagen.'}` : state ? `Mit GitHub abgeglichen · ${new Date(state.time).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}` : 'Verbindung mit GitHub wird hergestellt.');
+  sync.classList.toggle('warning', Boolean(state?.stale || state?.error || historyError));
+  sync.textContent = historyError ? errorMessage(historyError) : state?.error ? errorMessage(state.error) : state?.stale ? t('Cached data · {message}', { message: state.warning ? errorMessage(state.warning) : t('Live update failed.') }) : state ? t('Checked GitHub · {time}', { time: time(state.time) }) : t('Connecting to GitHub.');
   renderDetail();
 }
 function chooseProject(key) {
   selected = key;
+  historyError = null;
   document.querySelectorAll('[data-project-tab]').forEach(button => {
     const active = button.dataset.projectTab === key;
     button.classList.toggle('active', active);
@@ -86,15 +90,15 @@ async function loadProject(key, force) {
     hasMore: history.status === 'fulfilled' && history.value.data.length === 100,
     time: valid[0]?.time || Date.now(),
     stale: valid.some(r => r.stale) || latest.status === 'rejected' && latest.reason.status !== 404 || history.status === 'rejected',
-    warning: valid.find(r => r.warning)?.warning || (latest.status === 'rejected' ? latest.reason.message : ''),
-    error: !current && history.status === 'rejected' ? history.reason.message : '',
+    warning: valid.find(r => r.warning)?.warning || (latest.status === 'rejected' ? latest.reason : null),
+    error: !current && history.status === 'rejected' ? history.reason : null,
   };
   renderCard(key);
   if (key === selected) renderExplorer(true);
 }
 async function load(force = false) {
   if (loading) return;
-  loading = true; refresh.disabled = true;
+  loading = true; refresh.disabled = true; historyError = null;
   await Promise.allSettled(Object.keys(PROJECTS).map(key => loadProject(key, force)));
   loading = false; refresh.disabled = false;
 }
@@ -113,9 +117,14 @@ more.addEventListener('click', async () => {
     const existing = new Set(state.releases.map(r => r.id));
     state.releases.push(...stableReleases(result.data).filter(r => !existing.has(r.id)));
     state.page++; state.hasMore = result.data.length === 100;
+    historyError = null;
     if (key === selected) renderExplorer(true);
-  } catch (error) { document.querySelector('#sync-status').textContent = error.message; }
+  } catch (error) { historyError = error; renderExplorer(true); }
   finally { more.disabled = false; }
+});
+document.addEventListener('languagechange', () => {
+  Object.keys(states).forEach(renderCard);
+  if (states[selected]) renderExplorer(true);
 });
 load();
 setInterval(() => { if (!document.hidden) load(); }, 10 * 60 * 1000);

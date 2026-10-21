@@ -29,7 +29,7 @@ test('offline data is explicitly marked stale and keeps its original timestamp',
   const result = await github('/Feixiao/releases');
   assert.equal(result.stale, true);
   assert.equal(result.time, time);
-  assert.equal(result.warning, 'offline');
+  assert.equal(result.warning.code, 'network');
 });
 
 test('404 does not resurrect a cached deleted release', async t => {
@@ -42,8 +42,8 @@ test('rate limit pauses further calls and supplies an actionable error', async t
   const { github } = await api(t);
   let calls = 0;
   t.mock.method(globalThis, 'fetch', async () => { calls++; return { ok: false, status: 429, headers: new Headers({ 'retry-after': '60' }) }; });
-  await assert.rejects(github('/Feixiao/releases/latest'), /GitHub-Limit/);
-  await assert.rejects(github('/AirPort-RTW/releases/latest'), /GitHub-Limit/);
+  await assert.rejects(github('/Feixiao/releases/latest'), /GitHub rate limit/);
+  await assert.rejects(github('/AirPort-RTW/releases/latest'), /GitHub rate limit/);
   assert.equal(calls, 1);
 });
 

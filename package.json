@@ -2,6 +2,6 @@
   "name": "jomei9019-projects",
   "private": true,
   "type": "module",
-  "scripts": {"test": "node --test tests/*.test.mjs", "check": "node --check assets/app.js && node --check assets/beta.js && node --check assets/github.js && node --check assets/shared.js"},
+  "scripts": {"test": "node --test tests/*.test.mjs", "check": "node --check assets/app.js && node --check assets/beta.js && node --check assets/github.js && node --check assets/shared.js && node --check assets/i18n.js && node --check assets/theme.js"},
   "engines": {"node": ">=22"}
 }

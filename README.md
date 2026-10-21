@@ -15,7 +15,7 @@ Relative asset URLs support both the custom domain and the GitHub Pages reposito
 
 ## Languages
 
-English is the default, including the static HTML served without JavaScript. The compact **EN / DE** selector in the homepage and beta headers switches between English and German immediately. The choice is stored as `jomei-language` and applies across pages and return visits; disabled browser storage falls back gracefully.
+English is the default, including the static HTML served without JavaScript. The compact **EN / DE** selector in the homepage and beta footers switches between English and German immediately. The choice is stored as `jomei-language` and applies across pages and return visits; disabled browser storage falls back gracefully.
 
 `assets/i18n.js` contains the German translations, locale-aware formatting and language selection. Static text, page metadata, accessibility labels, theme controls and API error messages are translated. Dynamic release and artifact interfaces rerender in the selected language without another API request or losing the selected project/version or beta search/filter. Release notes, commit titles, versions and filenames remain as published on GitHub.
 
@@ -41,6 +41,12 @@ Requests are deduplicated and cached in the browser for ten minutes, and the pag
 Downloads go to GitHub's artifact download page and **require GitHub sign-in and repository read access**. Expired artifacts have no download button, and deleted artifacts no longer appear. No public mirrors or third-party download proxies are used. Run details link to the matching Actions run; the change summary is the run's actual commit title.
 
 The beta page has no link from the public homepage, uses `noindex, nofollow, noarchive` and is disallowed in `robots.txt`. **This is an unlisted page, not access control.** Anyone who knows `/beta/` can open it, and the source repository is public. If actual confidentiality is needed, use hosting with server-side authentication; a JavaScript password would not protect the content.
+
+## Cache-safe publication
+
+The HTML entry points reference a content-addressed directory under `assets/releases/`. Every module, stylesheet and theme initializer for a page loads from the same immutable directory. This prevents a newly translated page from using an older cached German-only download renderer or date formatter. GitHub API caching stores only data and remains independent of UI language.
+
+After editing top-level asset sources, run `npm run prepare:assets` and commit both the updated HTML references and the generated directory. Earlier directories are retained for visitors with cached HTML. Tests verify the complete deployed asset graph against the source files.
 
 ## Local checks
 

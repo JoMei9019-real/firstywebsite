@@ -10,3 +10,6 @@
 
 .language-select{appearance:auto;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:7px 6px;font:11px ui-monospace,SFMono-Regular,Consolas,monospace;cursor:pointer;min-height:36px;width:61px;flex-shrink:0}.nav-actions{gap:16px}.release-original-note{font-size:10px;color:var(--faint);margin-top:12px}
 @media(max-width:600px){.header nav{display:none}.nav-actions{gap:9px}.language-select{width:59px}.hero h1{font-size:clamp(38px,8vw,49px)}}
+
+.footer .language-select{font-size:10px;min-height:30px;width:58px;padding:5px;background:transparent}.footer{flex-wrap:wrap}
+@media(max-width:600px){.header nav{display:flex}}

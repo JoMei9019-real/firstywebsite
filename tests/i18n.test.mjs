@@ -62,11 +62,13 @@ test('translations preserve all dynamic placeholders', () => {
   }
 });
 
-test('both static pages default to English and offer an accessible EN/DE selector', async () => {
+test('both static pages default to English and keep language selection in the footer', async () => {
   for (const path of ['../index.html', '../beta/index.html']) {
     const html = await readFile(new URL(path, import.meta.url), 'utf8');
     assert.match(html, /<html lang="en"/);
     assert.match(html, /data-language-select aria-label="Language"/);
+    assert.ok(!html.split('</header>')[0].includes('data-language-select'));
+    assert.ok(html.split('<footer')[1].split('</footer>')[0].includes('data-language-select'));
     assert.match(html, /value="en" lang="en">EN/);
     assert.match(html, /value="de" lang="de">DE/);
     assert.ok(!/[äöüÄÖÜß]/.test(html), path);

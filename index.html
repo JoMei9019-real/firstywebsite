@@ -1,97 +1,64 @@
-<!DOCTYPE html>
-<html lang="de">
+<!doctype html>
+<html lang="de" data-theme="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/png" href="https://cdn.jomei.qzz.io/api/files/5XEwu/d0e4fqyrz5ffgocr6fl064durvmtamz3dykqgow9pfrly3r-cj4f11isteawvkzpvwi.png">
-  <title>Coming Soon</title>
-  <script>
-    if (window.location.pathname === "/discord") {
-      window.location.replace("https://discord.gg/XP7NVamgWR");
-    }
-  </script>
-  <style>
-    :root {
-      --glass-bg-light: rgba(255, 255, 255, 0.6);
-      --glass-bg-dark: rgba(0, 0, 0, 0.4);
-      --text-color-light: #000;
-      --text-color-dark: #fff;
-      --backdrop-blur: blur(20px);
-    }
-
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: linear-gradient(135deg, #c0c0c0, #e0e0e0);
-      transition: background 0.3s ease;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      html, body {
-        background: linear-gradient(135deg, #121212, #1e1e1e);
-      }
-    }
-
-    .glass-container {
-      background: var(--glass-bg-light);
-      border-radius: 20px;
-      padding: 2rem 3rem;
-      text-align: center;
-      color: var(--text-color-light);
-      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-      backdrop-filter: var(--backdrop-blur);
-      -webkit-backdrop-filter: var(--backdrop-blur);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      max-width: 90%;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      .glass-container {
-        background: var(--glass-bg-dark);
-        color: var(--text-color-dark);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      }
-    }
-
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-
-    p {
-      font-size: 1.2rem;
-      opacity: 0.8;
-    }
-
-    @media (max-width: 600px) {
-      .glass-container {
-        padding: 1.5rem;
-      }
-
-      h1 {
-        font-size: 2rem;
-      }
-
-      p {
-        font-size: 1rem;
-      }
-    }
-  </style>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#101613">
+  <meta name="description" content="Open-Source-Projekte von JoMei9019. Entdecke AirPort-RTW und Feixiao: Realtek Wi-Fi für macOS, aktuelle Downloads und alle Release Notes.">
+  <meta property="og:title" content="JoMei9019 — Open Source. Neue Möglichkeiten."><meta property="og:description" content="Realtek Wi-Fi für macOS. AirPort-RTW und Feixiao mit aktuellen Downloads und Changelogs."><meta property="og:type" content="website">
+  <title>JoMei9019 — Open Source. Neue Möglichkeiten.</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/style.css"><script src="assets/theme.js"></script><script type="module" src="assets/app.js"></script>
 </head>
 <body>
-  <div class="glass-container">
-    <h1>Coming Soon</h1>
-    <p>Unsere Website wird bald live gehen. Bleiben Sie dran!</p>
+<a class="skip-link" href="#main">Zum Inhalt</a>
+<header class="header"><div class="nav-wrap">
+  <a class="brand" href="./" aria-label="JoMei9019 Startseite"><img src="assets/favicon.svg" width="34" height="34" alt=""><span>JoMei9019<span class="brand-dot">.</span></span></a>
+  <nav aria-label="Hauptnavigation"><a href="#projekte">Projekte</a><a href="#changelog">Changelog</a><a href="#support">Support</a></nav>
+  <div class="nav-actions"><button class="icon-button theme-toggle" data-theme-toggle aria-label="Helles Design aktivieren" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg></button><a class="github-nav" href="https://github.com/JoMei9019-real" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a></div>
+</div></header>
+<main id="main">
+<section class="hero container" aria-labelledby="hero-title">
+  <div class="hero-copy"><p class="eyebrow"><span class="status-dot"></span> INDEPENDENT DEVELOPMENT · OPEN SOURCE</p>
+    <h1 id="hero-title">Gute Hardware.<br><span>Neue Möglichkeiten.</span></h1>
+    <p class="hero-description">Realtek Wi-Fi auf macOS. Zwei offene Projekte, die mehr aus deiner Hardware machen. Entwickelt von <strong>JoMei9019</strong>.</p>
+    <div class="hero-buttons"><a class="button primary" href="#projekte">Projekte entdecken <span aria-hidden="true">↓</span></a><a class="text-link" href="https://github.com/JoMei9019-real" target="_blank" rel="noopener noreferrer">Code ansehen <span aria-hidden="true">↗</span></a></div>
+    <div class="hero-footnote"><span>Für macOS & OpenCore</span><span class="separator">/</span><span>Von der Community. Für die Community.</span></div>
   </div>
+  <div class="hero-art" aria-hidden="true">
+    <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orbit orbit-three"></div><div class="orbit-axis axis-one"></div><div class="orbit-axis axis-two"></div>
+    <span class="orbit-point p-one"></span><span class="orbit-point p-two"></span><span class="orbit-point p-three"></span>
+    <div class="art-label label-top"><span class="tiny-plus">+</span> REALTEK × macOS</div>
+    <div class="wifi-core"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"><path d="M20 39q30-29 60 0M31 52q19-19 38 0M42 65q8-8 16 0"/><circle cx="50" cy="78" r="4" fill="currentColor" stroke="none"/></svg></div>
+    <div class="floating-label airport-label"><span class="mini-symbol">⌁</span><div><strong>AirPort-RTW</strong><small>Native Integration</small></div><span class="green-dot"></span></div>
+    <div class="floating-label feixiao-label"><span class="mini-symbol blue">&gt;_</span><div><strong>Feixiao</strong><small>Direkte Kontrolle</small></div><span class="floating-arrow">↗</span></div>
+    <div class="art-label label-bottom">OFFENER CODE. ECHTE MÖGLICHKEITEN.</div>
+  </div>
+</section>
+<div class="principles"><div class="container principles-inner"><span><span class="principle-icon">⌘</span> Für macOS entwickelt</span><span><span class="principle-icon">&lt;/&gt;</span> Vollständig Open Source</span><span><span class="principle-icon">↓</span> Direkt von GitHub</span><span><span class="principle-icon">⟳</span> Immer die aktuellen Releases</span></div></div>
+<section class="container section" id="projekte" aria-labelledby="projects-title">
+  <div class="section-heading"><div><p class="eyebrow">01 / DIE PROJEKTE</p><h2 id="projects-title">Zwei Ansätze. Ein Ziel.</h2></div><p>Wähle den Treiber, der zu deinem Setup passt.<br>Downloads, Dokumentation und Quellcode an einem Ort.</p></div>
+  <div class="project-grid">
+    <article class="project-card airport" id="airport">
+      <div class="project-visual airport-visual" aria-label="Illustration der nativen WLAN-Integration"><span class="visual-caption">NATIVE macOS INTEGRATION</span>
+        <div class="mac-panel"><div class="mac-panel-title"><strong>WLAN</strong><span class="illustrated-toggle"></span></div><div class="mac-panel-divider"></div><div class="network-row"><span class="network-icon">⌁</span><div><strong>Dein Netzwerk</strong><small>Mit macOS verbinden</small></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 9q9-8 18 0M6 13q6-5 12 0M9 17q3-3 6 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg></div><div class="network-option">Weitere Netzwerke <span>⌄</span></div></div>
+        <span class="visual-bottom">REALTEK PCIe <span>↔</span> IO80211</span>
+      </div>
+      <div class="project-content"><div class="project-title-row"><h3>AirPort-RTW</h3><span class="release-badge" data-version="airport">Release laden …</span></div><p class="project-subtitle">Realtek. Mit nativem macOS-Gefühl.</p><p class="project-description">Deine Realtek-Karte direkt im WLAN-Menü von macOS. Mit nativer Netzwerkauswahl und der AirPort-Anbindung über IO80211FamilyLegacy.</p><div class="tags"><span>Native WLAN-Steuerung</span><span>2,4 & 5 GHz</span><span>PCIe</span></div>
+        <div class="release-actions" data-download="airport" aria-live="polite"><p class="loading-copy">Aktueller Download wird geladen …</p></div><div class="project-links"><button class="text-link" data-show-changelog="airport">Changelog <span aria-hidden="true">↗</span></button><a href="https://github.com/JoMei9019-real/AirPort-RTW" target="_blank" rel="noopener noreferrer">Quellcode ↗</a><a href="https://github.com/JoMei9019-real/AirPort-RTW#opencore-setup-by-macos-version" target="_blank" rel="noopener noreferrer">Installation ↗</a></div>
+      </div>
+    </article>
+    <article class="project-card feixiao" id="feixiao">
+      <div class="project-visual feixiao-visual" aria-label="Illustration des Feixiao-Terminals"><span class="visual-caption">DEIN NETZWERK. DEINE KONTROLLE.</span><div class="terminal"><div class="terminal-title"><span class="window-dots"><i></i><i></i><i></i></span><span>Feixiao — rtw88ctl</span><span></span></div><div class="terminal-code"><p><span>~</span> rtw88ctl version</p><p class="terminal-comment"># Treiber & Utility im Blick</p><p><span>~</span> sudo rtw88ctl scan</p><p><span>~</span> sudo rtw88ctl status<span class="terminal-cursor"></span></p></div></div><span class="visual-bottom">LINUX rtw88 <span>→</span> macOS</span></div>
+      <div class="project-content"><div class="project-title-row"><h3>Feixiao</h3><span class="release-badge" data-version="feixiao">Release laden …</span></div><p class="project-subtitle">Der rtw88-Port mit direkter Kontrolle.</p><p class="project-description">Der Linux-rtw88-Treiber, portiert auf macOS. Mit dem passenden rtw88ctl-Tool für Netzwerksuche, Verbindungen und gezielte Diagnose.</p><div class="tags"><span>rtw88ctl</span><span>WPA / WPA2</span><span>PCIe</span></div><div class="release-actions" data-download="feixiao" aria-live="polite"><p class="loading-copy">Aktueller Download wird geladen …</p></div><div class="project-links"><button class="text-link" data-show-changelog="feixiao">Changelog <span aria-hidden="true">↗</span></button><a href="https://github.com/JoMei9019-real/Feixiao" target="_blank" rel="noopener noreferrer">Quellcode ↗</a><a href="https://github.com/JoMei9019-real/Feixiao#installation" target="_blank" rel="noopener noreferrer">Installation ↗</a></div></div>
+    </article>
+  </div>
+  <div class="compatibility"><div><span class="info-icon">i</span><strong>Passt dein Setup?</strong></div><p>Beide Projekte richten sich an ausgewählte Realtek-PCIe-Karten. RTL8821CE ist am umfangreichsten getestet. Prüfe vor der Installation die Hardware- und macOS-Hinweise des jeweiligen Projekts. Lade immer nur einen der beiden Treiber.</p><a href="https://github.com/JoMei9019-real/AirPort-RTW#supported-pcie-ids" target="_blank" rel="noopener noreferrer">Kompatibilität prüfen ↗</a></div>
+</section>
+<section class="changelog-section" id="changelog" aria-labelledby="changelog-title"><div class="container section">
+  <div class="section-heading"><div><p class="eyebrow">02 / WAS GIBT'S NEUES?</p><h2 id="changelog-title">Die Entwicklung geht weiter.</h2></div><p>Jede Version mit den passenden Release Notes.<br>Direkt aus dem jeweiligen GitHub-Release.</p></div>
+  <div class="release-explorer"><div class="release-sidebar"><div class="project-tabs" role="group" aria-label="Projekt auswählen"><button class="project-tab active" data-project-tab="airport" aria-pressed="true"><span class="tab-symbol">⌁</span>AirPort-RTW <span>↗</span></button><button class="project-tab" data-project-tab="feixiao" aria-pressed="false"><span class="tab-symbol">&gt;_</span>Feixiao <span>↗</span></button></div><label for="version-select">VERSION</label><select id="version-select" disabled><option>Versionen laden …</option></select><button class="text-link history-more" id="history-more" hidden>Ältere Versionen laden ↓</button><p class="sync-status" id="sync-status" aria-live="polite">Verbindung mit GitHub wird hergestellt.</p><button class="refresh-button" id="refresh-releases"><span aria-hidden="true">⟳</span> Aktualisieren</button></div><article class="release-detail" id="release-detail" aria-live="polite" aria-busy="true"><div class="release-placeholder"><span class="loader"></span><h3>Release Notes werden geladen.</h3><p>Einen Moment, wir schauen auf GitHub nach.</p></div></article></div>
+</div></section>
+<section class="container section support-section" id="support" aria-labelledby="support-title"><div><p class="eyebrow">03 / GEMEINSAM WEITER</p><h2 id="support-title">Gute Projekte wachsen<br>mit gutem Feedback.</h2><p>Ein Fehler, eine Idee oder ein neues Hardware-Setup?<br>Teile deine Erfahrungen und entwickle mit.</p></div><div class="support-links"><a href="https://github.com/JoMei9019-real/AirPort-RTW/issues" target="_blank" rel="noopener noreferrer"><span><strong>AirPort-RTW Issues</strong><small>Fehler melden & Features vorschlagen</small></span><span>↗</span></a><a href="https://github.com/JoMei9019-real/Feixiao/issues" target="_blank" rel="noopener noreferrer"><span><strong>Feixiao Issues</strong><small>Fragen, Diagnose & Hardware-Feedback</small></span><span>↗</span></a><a href="https://github.com/JoMei9019-real" target="_blank" rel="noopener noreferrer"><span><strong>Auf GitHub vorbeischauen</strong><small>Alle Projekte von JoMei9019</small></span><span>↗</span></a></div></section>
+</main>
+<footer class="footer container"><a class="brand" href="./"><img src="assets/favicon.svg" width="28" height="28" alt=""><span>JoMei9019<span class="brand-dot">.</span></span></a><p>Mit Neugier entwickelt. Offen geteilt.</p><span>© <span data-year>2026</span> JoMei9019</span><a href="#main">Nach oben ↑</a></footer>
+<noscript><div class="noscript-message">Für aktuelle Versionsnummern, Downloads und Changelogs bitte JavaScript aktivieren. Downloads findest du auch direkt auf <a href="https://github.com/JoMei9019-real/AirPort-RTW/releases">AirPort-RTW Releases</a> und <a href="https://github.com/JoMei9019-real/Feixiao/releases">Feixiao Releases</a>.</div></noscript>
 </body>
 </html>

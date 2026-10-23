@@ -13,3 +13,39 @@
 
 .footer .language-select{font-size:10px;min-height:30px;width:58px;padding:5px;background:transparent}.footer{flex-wrap:wrap}
 @media(max-width:600px){.header nav{display:flex}}
+
+/* Match the illustrated interfaces to the selected page theme. */
+:root[data-theme=light] .airport-visual{
+  background:radial-gradient(ellipse at 50% 80%,#b3d8bf70,transparent 75%),repeating-linear-gradient(0deg,transparent,transparent 29px,#60836c0a 29px,#60836c0a 30px),repeating-linear-gradient(90deg,transparent,transparent 29px,#60836c0a 29px,#60836c0a 30px),#e9f3eb;
+}
+:root[data-theme=light] .feixiao-visual{
+  background:radial-gradient(ellipse at 55% 60%,#bfd2ed70,transparent 75%),#eaf0f9;
+}
+:root[data-theme=light] .visual-caption{color:#486650}
+:root[data-theme=light] .visual-bottom{color:#486650}
+:root[data-theme=light] .feixiao-visual .visual-caption,
+:root[data-theme=light] .feixiao-visual .visual-bottom{color:#4d678a}
+:root[data-theme=light] .mac-panel{
+  color:#254531;background:linear-gradient(135deg,#ffffffed,#eff8f1f5);border-color:#b6cfbe;box-shadow:0 15px 40px #34583f1a,inset 0 1px 0 #ffffff;
+}
+:root[data-theme=light] .illustrated-toggle{background:#57956c}
+:root[data-theme=light] .mac-panel-divider{background:#cfdfd3}
+:root[data-theme=light] .network-icon{background:#4b87c6}
+:root[data-theme=light] .network-row small{color:#536f5c}
+:root[data-theme=light] .network-option{color:#4c6655}
+:root[data-theme=light] .terminal{
+  color:#294263;background:#f8fbff;border-color:#b6c9e0;box-shadow:0 15px 40px #294c761a,inset 0 1px 0 #ffffff;
+}
+:root[data-theme=light] .terminal-title{color:#526b8a;border-bottom-color:#d5e0ee;background:#edf3fc;border-radius:9px 9px 0 0}
+:root[data-theme=light] .window-dots i{background:#dc736b}
+:root[data-theme=light] .window-dots i:nth-child(2){background:#d3a34b}
+:root[data-theme=light] .window-dots i:nth-child(3){background:#62a377}
+:root[data-theme=light] .terminal-code p>span:first-child{color:#337348}
+:root[data-theme=light] .terminal-code .terminal-comment{color:#536d8b}
+:root[data-theme=light] .terminal-cursor{background:#456fa8}
+:root[data-theme=light] .hero-art{background:radial-gradient(ellipse at center,#b8dec64a,transparent 65%)}
+:root[data-theme=light] .wifi-core{
+  color:#386e4b;background:linear-gradient(145deg,#e6f3e8,#c5e0ce);border-color:#95bca0;box-shadow:0 25px 40px #335a3f1c,inset 0 1px 0 #ffffff;
+}
+:root[data-theme=light] .mini-symbol{color:#386e4b;background:#dfeee3}
+:root[data-theme=light] .mini-symbol.blue{color:#335e9a;background:#e2ebf8}

@@ -100,3 +100,16 @@
 @media(prefers-color-scheme:light){:root:not([data-theme]){color-scheme:light;--bg:#f8faf7;--surface:#fff;--raised:#eef3ee;--text:#15231b;--muted:#53675a;--faint:#63766a;--border:#d9e3d9;--accent:#386e4b;--accent-ink:#f4fff5;--blue:#335e9a;--blue-ink:#fff;--shadow:0 24px 70px #21452b0c}}
 
 .footer-controls{display:flex;align-items:center;gap:10px;flex-shrink:0}.footer .theme-select{min-height:30px;font-size:10px;padding:5px 7px;background:transparent;max-width:92px}
+
+/* Keep every navigation link available on mobile; the logo is the brand mark. */
+@media(max-width:760px){
+  .header .brand>span{display:none}
+  .header .brand{flex-shrink:0}
+  .header .brand img{width:32px;height:32px}
+  .header .nav-wrap{width:calc(100% - 32px);gap:12px}
+  .header nav{display:flex;flex:1;justify-content:center;gap:12px;font-size:11px;min-width:0}
+  .header nav a,.header nav a:last-child{display:inline-flex;align-items:center;min-height:44px;white-space:nowrap}
+  .header .nav-actions{flex-shrink:0}
+  .header .github-nav{display:inline-flex;align-items:center;min-height:44px;font-size:11px;gap:5px;white-space:nowrap}
+  .header .github-nav span{font-size:13px}
+}

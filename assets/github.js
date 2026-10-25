@@ -82,6 +82,30 @@ export function betaBuilds(runs, artifacts) {
   })).filter(build => build.artifacts.length)
     .sort((a, b) => Date.parse(b.run.created_at) - Date.parse(a.run.created_at));
 }
+// Branch names may be reused across releases; only the artifact identifies
+// the actual version built (for example 1.0.2 and 1.1.0 on 1.0.0-beta).
+export function betaVersion(name) {
+  return /^AirPortRTW[-_.]v?(\d+\.\d+\.\d+)(?=$|[-_.+\s])/i.exec(name || '')?.[1] || 'other';
+}
+export function betaSeries(builds) {
+  const groups = new Map();
+  for (const { run, artifacts } of builds) {
+    for (const artifact of artifacts) {
+      const version = betaVersion(artifact.name);
+      if (!groups.has(version)) groups.set(version, { version, builds: [] });
+      groups.get(version).builds.push({ run, artifact });
+    }
+  }
+  for (const group of groups.values()) {
+    group.builds.sort((a, b) => Date.parse(b.run.created_at) - Date.parse(a.run.created_at) || b.artifact.id - a.artifact.id);
+  }
+  return [...groups.values()].sort((a, b) => {
+    if (a.version === 'other') return 1;
+    if (b.version === 'other') return -1;
+    const left = a.version.split('.').map(Number), right = b.version.split('.').map(Number);
+    return right[0] - left[0] || right[1] - left[1] || right[2] - left[2];
+  });
+}
 export function artifactURL(runId, artifactId) {
   return `${repoURL('AirPort-RTW')}/actions/runs/${Number(runId)}/artifacts/${Number(artifactId)}`;
 }

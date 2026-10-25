@@ -1,0 +1,58 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { renderPage } from './helpers/render.mjs';
+
+test('version selection isolates downloads, search and counts and survives refresh and language changes', async context => {
+  const run = (id, head_branch, created_at) => ({ id, head_branch, created_at, status: 'completed', conclusion: 'success', event: 'push', head_sha: `abc${id}`, display_title: `Change ${id}`, html_url: `https://github.com/JoMei9019-real/AirPort-RTW/actions/runs/${id}` });
+  const runs = [run(1, '1.0.0-beta', '2026-10-01'), run(2, '1.0.0-beta', '2026-10-24'), run(3, 'beta-2.0.0', '2026-10-07')];
+  const artifacts = runs.map((run, index) => ({ id: run.id * 10, workflow_run: { id: run.id }, name: `AirPortRTW-${['1.0.2-beta.4', '1.1.0-beta.7', '2.0.0-beta.17'][index]}`, created_at: run.created_at, expires_at: '2099-01-01', size_in_bytes: 1000 }));
+  let fail = false;
+  const page = await renderPage(context, 'beta/index.html', url => {
+    if (fail) throw new Error('offline');
+    return url.includes('/actions/artifacts?') ? { artifacts } : { workflow_runs: runs };
+  });
+  const filters = page.element('#version-filters');
+  const select = version => filters.trigger('click', { target: { closest: () => ({ dataset: { version } }) } });
+  const html = () => page.element('#build-list').innerHTML;
+  const settle = async () => { for (let i = 0; i < 10; i++) await new Promise(setImmediate); };
+  // The newest updated series opens, rather than the highest version.
+  assert.match(page.element('#series-heading').textContent, /1\.1\.0/);
+  assert.match(html(), /AirPortRTW-1\.1\.0-beta\.7/);
+  assert.doesNotMatch(html(), /AirPortRTW-(1\.0\.2|2\.0\.0)/);
+  assert.match(filters.innerHTML, /data-version="2.0.0"/);
+  assert.equal(page.element('#build-range').textContent, '1 of 1 builds · Newest first');
+  page.element('#build-search').value = 'beta.7';
+  select('1.0.2');
+  assert.equal(page.element('#build-search').value, '');
+  assert.match(html(), /artifacts\/10/);
+  assert.doesNotMatch(html(), /artifacts\/(20|30)/);
+  page.element('#build-search').value = 'beta.7';
+  page.element('#build-search').trigger('input');
+  assert.match(html(), /No matching builds/);
+  page.element('#build-search').value = '';
+  page.element('#build-search').trigger('input');
+  page.language.setLanguage('de');
+  assert.match(page.element('#series-heading').textContent, /1\.0\.2 Beta-Builds/);
+  assert.match(filters.innerHTML, /BETA-REIHE/);
+  assert.match(html(), /Artifact herunterladen/);
+  page.language.setLanguage('en');
+  page.element('#refresh-builds').trigger('click');
+  await settle();
+  assert.match(page.element('#series-heading').textContent, /1\.0\.2/);
+  assert.match(html(), /artifacts\/10/);
+  // A new version is discovered without adding a hardcoded tab.
+  runs.push(run(4, 'beta-3.0.0', '2026-10-25'));
+  artifacts.push({ ...artifacts[0], id: 40, workflow_run: { id: 4 }, name: 'AirPortRTW-3.0.0-beta.1' });
+  page.element('#refresh-builds').trigger('click');
+  await settle();
+  assert.match(filters.innerHTML, /data-version="3.0.0"/);
+  assert.match(page.element('#series-heading').textContent, /1\.0\.2/);
+  select('3.0.0');
+  assert.match(html(), /artifacts\/40/);
+  fail = true;
+  page.element('#refresh-builds').trigger('click');
+  await settle();
+  assert.match(page.element('#series-heading').textContent, /3\.0\.0/);
+  assert.match(html(), /artifacts\/40/);
+  assert.match(page.element('#beta-status').textContent, /Cached data/);
+});

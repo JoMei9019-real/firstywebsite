@@ -10,6 +10,7 @@ export async function renderPage(context, page, payload) {
       classList: { toggle() {} }, setAttribute(name, value) { this.attributes[name] = value; },
       addEventListener(name, listener) { this.listeners.set(name, listener); },
       trigger(name, event = {}) { return this.listeners.get(name)?.(event); },
+      querySelector(selector) { return element(`${key} ${selector}`); },
       focus() {}, scrollIntoView() {},
     });
     return elements.get(key);

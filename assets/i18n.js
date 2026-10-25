@@ -1,4 +1,11 @@
 export const GERMAN = {
+  "Appearance": "Darstellung",
+  "System": "System",
+  "Light": "Hell",
+  "Dark": "Dunkel",
+  "Coming soon!": "Demnächst!",
+  "AirPort-RTW by JoMei9019. Coming soon!": "AirPort-RTW von JoMei9019. Demnächst!",
+  "Feixiao by JoMei9019. Coming soon!": "Feixiao von JoMei9019. Demnächst!",
   "AirPort-RTW test builds from GitHub Actions. Choose a version series and explore its beta builds, changes and downloads.": "AirPort-RTW Test Builds aus GitHub Actions. Wähle eine Versionsreihe und entdecke ihre Betas, Änderungen und Downloads.",
   "01 / CHOOSE YOUR VERSION": "01 / VERSION AUSWÄHLEN",
   "One version at a time.": "Jede Version für sich.",

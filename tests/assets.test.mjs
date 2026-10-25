@@ -7,7 +7,7 @@ test('published pages share one immutable asset version matching current sources
   const names = (await readdir(new URL('assets/', root), { withFileTypes: true }))
     .filter(file => file.isFile() && /\.(js|css|svg|png|ico)$/.test(file.name)).map(file => file.name).sort();
   const versions = new Set();
-  for (const page of ['index.html', 'beta/index.html']) {
+  for (const page of ['index.html', 'beta/index.html', 'airport-rtw/index.html', 'feixiao/index.html']) {
     const url = new URL(page, root);
     const html = await readFile(url, 'utf8');
     const references = [...html.matchAll(/(?:src|href)="([^"#]*assets\/[^"#]+)"/g)];

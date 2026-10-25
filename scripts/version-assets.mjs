@@ -20,7 +20,7 @@ const version = hash.digest('hex').slice(0, 16);
 const directory = resolve(assets, 'releases', version);
 await mkdir(directory, { recursive: true });
 for (const [file, source] of sources) await writeFile(resolve(directory, file), source);
-for (const page of ['index.html', 'beta/index.html']) {
+for (const page of ['index.html', 'beta/index.html', 'airport-rtw/index.html', 'feixiao/index.html']) {
   const path = resolve(root, page);
   const html = await readFile(path, 'utf8');
   const updated = html.replace(/((?:\.\.\/)?assets\/)(?:releases\/[a-f0-9]+\/)?([\w.-]+\.(?:js|css|svg|png|ico))/g,

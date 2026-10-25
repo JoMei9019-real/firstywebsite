@@ -57,18 +57,15 @@ export function markdown(source, base) {
 }
 
 export function initTheme() {
-  const button = document.querySelector('[data-theme-toggle]');
+  const select = document.querySelector('[data-theme-select]');
   const root = document.documentElement;
-  const update = () => {
-    const light = root.dataset.theme === 'light';
-    button?.setAttribute('aria-label', light ? t('Enable dark theme') : t('Enable light theme'));
-    button?.setAttribute('aria-pressed', String(light));
-  };
-  button?.addEventListener('click', () => {
-    root.dataset.theme = root.dataset.theme === 'light' ? 'dark' : 'light';
-    try { localStorage.setItem('jomei-theme', root.dataset.theme); } catch { /* Optional */ }
+  const update = () => { if (select) select.value = root.dataset.appearance || 'system'; };
+  select?.addEventListener('change', () => {
+    root.dataset.appearance = select.value;
+    document.dispatchEvent(new Event('appearancechange'));
     update();
   });
+  document.addEventListener('themechange', update);
   document.addEventListener('languagechange', update);
   update();
   const year = document.querySelector('[data-year]');

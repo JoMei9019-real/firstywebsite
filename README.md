@@ -1,6 +1,6 @@
 # JoMei9019 — Projects
 
-Responsive project website for **AirPort-RTW** and **Feixiao**, with direct release downloads, version-specific changelogs, a persistent light/dark theme and a separate test-build page. All visible branding is JoMei9019.
+Responsive project website for **AirPort-RTW** and **Feixiao**, with direct release downloads, version-specific changelogs, a system-aware light/dark theme and a separate test-build page. All visible branding is JoMei9019.
 
 ## Hosting
 
@@ -8,10 +8,15 @@ The website is buildless HTML, CSS and JavaScript. Serve the repository root on 
 
 - `/`: project presentation, stable downloads, changelog and support
 - `/beta/`: AirPort-RTW GitHub Actions artifacts
+- `/airport-rtw/` and `/feixiao/`: individual Coming soon product pages, linked from the homepage project titles
 - `/site/`: redirect to the homepage, preserving the old entry point
 - `/discord/` and `/discord.html`: existing Discord destination
 
 Relative asset URLs support both the custom domain and the GitHub Pages repository subpath.
+
+## Appearance
+
+Appearance defaults to **System** on every page and tracks `prefers-color-scheme` changes while the page is open. The compact appearance selector can explicitly choose **Light** or **Dark**, or return to **System**. New choices persist as `jomei-appearance` and synchronize between tabs. Legacy `jomei-theme` values are ignored so returning visitors receive the new automatic default. Disabled storage does not prevent automatic selection. The early theme script applies the appearance before content renders; browser theme color follows it too.
 
 ## Languages
 

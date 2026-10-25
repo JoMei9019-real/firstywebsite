@@ -77,3 +77,24 @@
 .latest-build-label{font-size:10px;color:var(--accent)}
 .build-branch{font:9px/1.7 ui-monospace,monospace;color:var(--muted);overflow-wrap:anywhere}
 @media(max-width:760px){.version-intro{align-items:start;flex-direction:column;gap:12px}.version-intro>p{max-width:100%}.version-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr))}.version-card{padding:18px}.version-card>strong{font-size:29px}.series-heading{width:100%}.version-intro h2{font-size:25px}}
+
+/* Shared appearance control and deliberately empty product landing pages. */
+.theme-select{appearance:auto;min-height:36px;max-width:96px;padding:7px 9px;border:1px solid var(--border);border-radius:7px;background:var(--surface);color:var(--muted);font-size:11px;cursor:pointer}
+.theme-select:hover{color:var(--text);border-color:var(--faint)}
+.project-page-link{display:inline-flex;align-items:center;gap:10px}
+.project-page-link>span{font-size:17px;color:var(--faint);font-weight:400}
+.project-page-link:hover,.project-page-link:hover>span{color:var(--accent)}
+.feixiao .project-page-link:hover,.feixiao .project-page-link:hover>span{color:var(--blue)}
+.product-page{min-height:100vh;min-height:100svh;display:flex;flex-direction:column}
+.product-page .nav-actions{margin-left:auto}
+.coming-soon{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding-block:90px;min-height:430px}
+.coming-soon h1{font-size:clamp(42px,7vw,82px);font-weight:550;letter-spacing:-.055em;margin-top:24px}
+.coming-soon-message{font-size:clamp(24px,3vw,34px);letter-spacing:-.035em;color:var(--accent);margin-top:20px}
+.feixiao-page .coming-soon-message{color:var(--blue)}
+.coming-soon .button{margin-top:40px}
+.product-page .footer{width:min(1160px,calc(100% - 80px));font-size:10px}
+.product-page .footer>span{margin-left:auto}
+@media(max-width:760px){.theme-select{max-width:88px;font-size:10px;padding:7px}.coming-soon{padding-block:70px;min-height:400px}.product-page .footer{width:calc(100% - 48px)}}
+@media(max-width:430px){.product-page .footer{width:calc(100% - 36px)}.nav-wrap{gap:8px}.header nav{gap:10px}.theme-select{max-width:80px}}
+
+@media(prefers-color-scheme:light){:root:not([data-theme]){color-scheme:light;--bg:#f8faf7;--surface:#fff;--raised:#eef3ee;--text:#15231b;--muted:#53675a;--faint:#63766a;--border:#d9e3d9;--accent:#386e4b;--accent-ink:#f4fff5;--blue:#335e9a;--blue-ink:#fff;--shadow:0 24px 70px #21452b0c}}

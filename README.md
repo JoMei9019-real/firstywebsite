@@ -8,7 +8,8 @@ The website is buildless HTML, CSS and JavaScript. Serve the repository root on 
 
 - `/`: project presentation, stable downloads, changelog and support
 - `/beta/`: AirPort-RTW GitHub Actions artifacts
-- `/airport-rtw/` and `/feixiao/`: individual Coming soon product pages, linked from the homepage project titles
+- `/airport-rtw/`: Coming soon product page
+- `/feixiao/`: bilingual installation tutorial for the Feixiao 1.1.0 packaged release, with matching-file guidance, OpenCore values, copied commands, local checklist and troubleshooting. The tutorial follows the current README/release; the older OPENCORE_GUIDE.txt is not used for unsupported USB or security claims. Both product pages are linked from homepage titles.
 - `/site/`: redirect to the homepage, preserving the old entry point
 - `/discord/` and `/discord.html`: existing Discord destination
 

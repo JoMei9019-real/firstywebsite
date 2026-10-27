@@ -225,3 +225,10 @@
 .airport-known-issue{margin-top:0}
 .airport-hardware{min-width:510px}
 @media(max-width:760px){.airport-page .guide-hero{grid-template-columns:1fr}.airport-instructions{font-size:12px}.airport-os-choice select{font-size:11px}}
+
+.outdated-label{display:inline-flex;align-items:center;width:fit-content;vertical-align:middle;border:1px solid #98713870;border-radius:5px;padding:4px 8px;color:#e8c38d;background:#98713816;font:600 10px/1.4 ui-monospace,monospace;letter-spacing:0;white-space:nowrap}
+:root[data-theme=light] .outdated-label{color:#765018;background:#f7eddb;border-color:#d6bb91}
+.outdated-notice{margin:22px 0;padding:16px 18px;border:1px solid #98713870;border-radius:9px;background:#9871380c;font-size:12px;line-height:1.8}
+.outdated-notice strong{font-size:13px}.outdated-notice p{color:var(--muted);margin:5px 0 9px}.outdated-notice a{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+.release-detail-heading h3 .latest-build-label{vertical-align:middle;letter-spacing:0}
+.version-card>.outdated-label{margin-top:10px}

@@ -23,12 +23,18 @@ test('deployed home renders both English download buttons and dates, including a
     assert.ok(html.includes('21 October 2026'));
     assert.ok(!html.includes('herunterladen') && !html.includes('Oktober'));
   }
+  assert.match(page.element('#version-select').innerHTML, /v1\.0\.0 — Outdated/);
+  assert.doesNotMatch(details(), /outdated-notice/);
   page.element('#version-select').value = '1';
   page.element('#version-select').trigger('change');
+  assert.match(details(), /outdated-label[^>]*>Outdated/);
+  assert.match(details(), /Get latest release \(v1\.1\.0\) ↗/);
+  assert.match(details(), /releases\/tag\/v1\.1\.0/);
   const requests = page.requests();
   page.language.setLanguage('de');
   assert.match(airport(), /AirPort-RTW herunterladen/);
   assert.match(feixiao(), /Feixiao herunterladen/);
+  assert.match(details(), /outdated-label[^>]*>Veraltet/);
   assert.match(details(), /Veröffentlicht am 21. Oktober 2026/);
   page.language.setLanguage('en');
   assert.equal(page.element('#version-select').value, '1');

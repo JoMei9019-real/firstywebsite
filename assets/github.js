@@ -114,3 +114,16 @@ export function formatBytes(bytes) {
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
   return `${(bytes / (1024 * 1024)).toLocaleString(locale(), { maximumFractionDigits: 1 })} MB`;
 }
+
+// A stable release supersedes all betas of the same or an earlier version.
+// Ignore unfamiliar tags rather than guessing their order.
+export function isReleasedBeta(version, stableTag) {
+  const beta = /^(\d+)\.(\d+)\.(\d+)$/.exec(version || '');
+  const stable = /^v?(\d+)\.(\d+)\.(\d+)$/i.exec(stableTag || '');
+  if (!beta || !stable) return false;
+  for (let i = 1; i <= 3; i++) {
+    const difference = Number(stable[i]) - Number(beta[i]);
+    if (difference) return difference > 0;
+  }
+  return true;
+}

@@ -1,4 +1,9 @@
 export const GERMAN = {
+  "Outdated": "Veraltet",
+  "Latest": "Aktuell",
+  " — Outdated": " — Veraltet",
+  "A newer release is available. This download is kept for reference.": "Ein neueres Release ist verfügbar. Dieser Download bleibt als Referenz erhalten.",
+  "Get latest release ({version}) ↗": "Aktuelles Release ({version}) öffnen ↗",
   "Wi-Fi, right at home.": "WLAN, direkt zu Hause.",
   "Your Realtek PCIe card in the macOS Wi-Fi menu. Choose a network, connect, and move between compatible access points — all with familiar system controls.": "Deine Realtek-PCIe-Karte im macOS-WLAN-Menü. Wähle ein Netzwerk, verbinde dich und wechsle zwischen kompatiblen Access Points – mit den vertrauten Systemfunktionen.",
   "Download 1.1.0": "1.1.0 herunterladen",

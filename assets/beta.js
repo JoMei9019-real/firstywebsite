@@ -1,4 +1,4 @@
-import { github, repoURL, betaBuilds, betaSeries, isExpired, artifactURL, formatBytes } from './github.js';
+import { github, repoURL, betaBuilds, betaSeries, isExpired, isReleasedBeta, artifactURL, formatBytes } from './github.js';
 import { escapeHTML as e, safeURL, date, download, arrow, initTheme } from './shared.js';
 import { t, time, errorMessage, initLanguage } from './i18n.js';
 initLanguage();
@@ -13,7 +13,7 @@ const older = document.querySelector('#load-older');
 const refresh = document.querySelector('#refresh-builds');
 const range = document.querySelector('#build-range');
 let runs = [], artifacts = [], builds = [], series = [], version = null, busy = false, page = 1, moreRuns = false, moreArtifacts = false;
-let lastSync = null, lastError = null;
+let lastSync = null, lastError = null, stableRelease = null;
 const pageSize = 100;
 const root = repoURL('AirPort-RTW');
 const versionLabel = value => value === 'other' ? t('Other builds') : value;
@@ -28,13 +28,15 @@ function renderFilters() {
   filters.innerHTML = series.length ? series.map(group => {
     const latest = group.builds[0];
     const label = versionLabel(group.version);
+    const outdated = isReleasedBeta(group.version, stableRelease?.tag_name);
     const latestName = latest.artifact.name.replace(/^AirPortRTW[-_.]/i, '');
-    return `<button class="version-card ${version === group.version ? 'active' : ''}" data-version="${e(group.version)}" aria-pressed="${version === group.version}" aria-controls="build-list" aria-label="${e(t('Explore {version}', { version: label }))}"><span class="version-card-top"><span>${t(group.version === 'other' ? 'UNVERSIONED' : 'BETA SERIES')}</span><span class="version-check" aria-hidden="true">${version === group.version ? '✓' : '↗'}</span></span><strong>${e(label)}</strong><span class="version-latest">${t('Latest build:')} <span>${e(latestName)}</span></span><span class="version-card-bottom"><span>${buildCount(group.builds.length)}</span><span>${e(date(latest.artifact.created_at))}</span></span></button>`;
+    return `<button class="version-card ${version === group.version ? 'active' : ''}" data-version="${e(group.version)}" aria-pressed="${version === group.version}" aria-controls="build-list" aria-label="${e(t('Explore {version}', { version: label }))}"><span class="version-card-top"><span>${t(group.version === 'other' ? 'UNVERSIONED' : 'BETA SERIES')}</span><span class="version-check" aria-hidden="true">${version === group.version ? '✓' : '↗'}</span></span><strong>${e(label)}</strong>${outdated ? `<span class="outdated-label">${t('Outdated')}</span>` : ''}<span class="version-latest">${t('Latest build:')} <span>${e(latestName)}</span></span><span class="version-card-bottom"><span>${buildCount(group.builds.length)}</span><span>${e(date(latest.artifact.created_at))}</span></span></button>`;
   }).join('') : `<p class="muted">${t(lastError ? 'Could not load the builds.' : 'No matching artifacts available yet.')}</p>`;
 }
 function renderBuild({ run, artifact: a }, index) {
   const expired = isExpired(a);
-  return `<article class="build-card"><div class="build-header"><div><div class="build-badges"><span class="release-badge">${e(versionLabel(version))}</span>${index === 0 ? `<span class="latest-build-label">${t('Latest in series')}</span>` : ''}<span class="build-branch">${t('Branch:')} ${e(run.head_branch)}</span></div><h3>${e(a.name)}</h3><div class="build-meta"><span>${e(date(a.created_at))}</span><span>·</span><span>${formatBytes(a.size_in_bytes)}</span><span>·</span><a href="${root}/commit/${e(run.head_sha)}" target="_blank" rel="noopener noreferrer">${e(run.head_sha?.slice(0, 7))} ↗</a></div></div>${expired ? `<span class="expired-label">${t('Artifact expired')}</span>` : `<a class="button primary" href="${artifactURL(run.id, a.id)}" target="_blank" rel="noopener noreferrer">${download} ${t('Download artifact')}</a>`}</div><p class="build-commit"><strong>${t('Change:')}</strong> ${e(run.display_title || run.head_commit?.message?.split('\n')[0] || t('Build without a description'))}</p><div class="build-footer"><div>${t(expired ? 'Expired on' : 'Available until')} ${e(date(a.expires_at))} · ${t('GitHub sign-in required')}</div><a class="text-link" href="${e(safeURL(run.html_url))}" target="_blank" rel="noopener noreferrer">${t('View build & changes')} ${arrow}</a></div></article>`;
+  const outdated = index > 0 || isReleasedBeta(version, stableRelease?.tag_name);
+  return `<article class="build-card"><div class="build-header"><div><div class="build-badges"><span class="release-badge">${e(versionLabel(version))}</span>${outdated ? `<span class="outdated-label">${t('Outdated')}</span>` : `<span class="latest-build-label">${t('Latest in series')}</span>`}<span class="build-branch">${t('Branch:')} ${e(run.head_branch)}</span></div><h3>${e(a.name)}</h3><div class="build-meta"><span>${e(date(a.created_at))}</span><span>·</span><span>${formatBytes(a.size_in_bytes)}</span><span>·</span><a href="${root}/commit/${e(run.head_sha)}" target="_blank" rel="noopener noreferrer">${e(run.head_sha?.slice(0, 7))} ↗</a></div></div>${expired ? `<span class="expired-label">${t('Artifact expired')}</span>` : `<a class="button primary" href="${artifactURL(run.id, a.id)}" target="_blank" rel="noopener noreferrer">${download} ${t('Download artifact')}</a>`}</div><p class="build-commit"><strong>${t('Change:')}</strong> ${e(run.display_title || run.head_commit?.message?.split('\n')[0] || t('Build without a description'))}</p><div class="build-footer"><div>${t(expired ? 'Expired on' : 'Available until')} ${e(date(a.expires_at))} · ${t('GitHub sign-in required')}</div><a class="text-link" href="${e(safeURL(run.html_url))}" target="_blank" rel="noopener noreferrer">${t('View build & changes')} ${arrow}</a></div></article>`;
 }
 function render() {
   const query = search.value.toLowerCase().trim();
@@ -64,7 +66,8 @@ async function load(force = false, append = false) {
     append && !moreArtifacts ? Promise.resolve(null) : github(`/AirPort-RTW/actions/artifacts?per_page=${pageSize}&page=${nextPage}`, { force }),
   ];
   try {
-    const [runResult, artifactResult] = await Promise.all(queries);
+    const [runResult, artifactResult, releaseResult] = await Promise.all([...queries, github('/AirPort-RTW/releases/latest', { force }).catch(() => null)]);
+    if (releaseResult?.data.tag_name && !releaseResult.data.draft && !releaseResult.data.prerelease) stableRelease = releaseResult.data;
     runs = append ? mergeById(runs, runResult?.data.workflow_runs || []) : runResult.data.workflow_runs;
     artifacts = append ? mergeById(artifacts, artifactResult?.data.artifacts || []) : artifactResult.data.artifacts;
     if (runResult) moreRuns = runResult.data.workflow_runs.length === pageSize;

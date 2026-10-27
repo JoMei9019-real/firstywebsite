@@ -44,14 +44,16 @@ function renderDetail() {
     return;
   }
   const files = releaseAssets(release);
+  const outdated = Boolean(state.latest && release.id !== state.latest.id);
+  const notice = outdated ? `<aside class="outdated-notice"><strong>${t('Outdated')}</strong><p>${t('A newer release is available. This download is kept for reference.')}</p><a href="${e(safeURL(state.latest.html_url))}" target="_blank" rel="noopener noreferrer">${e(t('Get latest release ({version}) ↗', { version: state.latest.tag_name }))}</a></aside>` : '';
   const base = `${repoURL(PROJECTS[selected].repo)}/blob/${encodeURIComponent(release.tag_name)}/`;
-  detail.innerHTML = `<div class="release-detail-heading"><div><p class="eyebrow">${e(PROJECTS[selected].name)} <span class="stable-label">STABLE</span></p><h3>${e(release.tag_name)}</h3><p class="muted">${e(t('Published on {date}', { date: date(release.published_at) }))}</p></div><a class="icon-button" href="${e(safeURL(release.html_url))}" target="_blank" rel="noopener noreferrer" aria-label="${t('Open release on GitHub')}">${arrow}</a></div><p class="release-original-note">${t('Release notes are shown as published on GitHub.')}</p><div class="release-markdown">${markdown(release.body, base)}</div><div class="release-files"><h4>${t('Downloads')} <span>${files.length}</span></h4>${files.length ? files.map(a => `<a class="file-link" href="${e(safeURL(a.browser_download_url))}">${download}<span>${e(a.name)}</span><small>${formatBytes(a.size)}</small></a>`).join('') : `<p class="muted">${t('No files for this version. Find the source code and details on GitHub.')}</p>`}</div>`;
+  detail.innerHTML = `<div class="release-detail-heading"><div><p class="eyebrow">${e(PROJECTS[selected].name)} <span class="stable-label">STABLE</span></p><h3>${e(release.tag_name)} <span class="${outdated ? 'outdated-label' : 'latest-build-label'}">${t(outdated ? 'Outdated' : 'Latest')}</span></h3><p class="muted">${e(t('Published on {date}', { date: date(release.published_at) }))}</p></div><a class="icon-button" href="${e(safeURL(release.html_url))}" target="_blank" rel="noopener noreferrer" aria-label="${t('Open release on GitHub')}">${arrow}</a></div>${notice}<p class="release-original-note">${t('Release notes are shown as published on GitHub.')}</p><div class="release-markdown">${markdown(release.body, base)}</div><div class="release-files"><h4>${t('Downloads')} <span>${files.length}</span></h4>${files.length ? files.map(a => `<a class="file-link" href="${e(safeURL(a.browser_download_url))}">${download}<span>${e(a.name)}</span><small>${formatBytes(a.size)}</small></a>`).join('') : `<p class="muted">${t('No files for this version. Find the source code and details on GitHub.')}</p>`}</div>`;
 }
 function renderExplorer(keepSelection = false) {
   const old = selector.value;
   const state = states[selected];
   const releases = state?.releases || [];
-  selector.innerHTML = releases.length ? releases.map(r => `<option value="${e(r.id)}">${e(r.tag_name)}${r.id === state.latest?.id ? t(' — Latest') : ''}</option>`).join('') : `<option>${t('No version available')}</option>`;
+  selector.innerHTML = releases.length ? releases.map(r => `<option value="${e(r.id)}">${e(r.tag_name)}${r.id === state.latest?.id ? t(' — Latest') : t(' — Outdated')}</option>`).join('') : `<option>${t('No version available')}</option>`;
   selector.disabled = !releases.length;
   if (keepSelection && releases.some(r => String(r.id) === old)) selector.value = old;
   else if (state?.latest) selector.value = String(state.latest.id);

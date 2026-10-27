@@ -9,6 +9,7 @@ test('version selection isolates downloads, search and counts and survives refre
   let fail = false;
   const page = await renderPage(context, 'beta/index.html', url => {
     if (fail) throw new Error('offline');
+    if (url.endsWith('/releases/latest')) return { tag_name: 'v1.1.0', prerelease: false, draft: false };
     return url.includes('/actions/artifacts?') ? { artifacts } : { workflow_runs: runs };
   });
   const filters = page.element('#version-filters');
@@ -18,9 +19,13 @@ test('version selection isolates downloads, search and counts and survives refre
   // The newest updated series opens, rather than the highest version.
   assert.match(page.element('#series-heading').textContent, /1\.1\.0/);
   assert.match(html(), /AirPortRTW-1\.1\.0-beta\.7/);
+  assert.match(html(), /outdated-label[^>]*>Outdated/);
   assert.doesNotMatch(html(), /AirPortRTW-(1\.0\.2|2\.0\.0)/);
   assert.match(filters.innerHTML, /data-version="2.0.0"/);
   assert.equal(page.element('#build-range').textContent, '1 of 1 builds · Newest first');
+  select('2.0.0');
+  assert.doesNotMatch(html(), /outdated-label/);
+  assert.match(html(), /Latest in series/);
   page.element('#build-search').value = 'beta.7';
   select('1.0.2');
   assert.equal(page.element('#build-search').value, '');

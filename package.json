@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "test": "node --test tests/*.test.mjs",
-    "check": "node --check assets/app.js && node --check assets/beta.js && node --check assets/github.js && node --check assets/shared.js && node --check assets/i18n.js && node --check assets/theme.js && node --check assets/product.js && node --check assets/feixiao-guide.js",
+    "check": "node --check assets/app.js && node --check assets/beta.js && node --check assets/github.js && node --check assets/shared.js && node --check assets/i18n.js && node --check assets/theme.js && node --check assets/product.js && node --check assets/feixiao-guide.js && node --check assets/airport.js",
     "prepare:assets": "node scripts/version-assets.mjs"
   },
   "engines": {

@@ -205,3 +205,23 @@
 @media(max-width:380px){.guide-sidebar nav{grid-template-columns:repeat(2,minmax(0,1fr))}.guide-hero h1{font-size:38px}.guide-step h2{font-size:21px}}
 
 .guide-table-hint{display:none}.guide-table-wrap:focus-visible{outline:3px solid var(--guide-accent);outline-offset:4px}@media(max-width:760px){.guide-step .guide-table-hint{display:block;font-size:10px;color:var(--faint)}}
+
+/* AirPort-RTW shares the guide layout, with the project's green accent. */
+.airport-page .guide-main{--guide-accent:var(--accent)}
+.airport-page .guide-hero{grid-template-columns:1.25fr 1fr}
+.airport-page .guide-file-overview dt{font-family:inherit;font-size:19px;letter-spacing:-.025em}
+.airport-instructions{padding-left:22px;margin:20px 0 0;color:var(--muted);font-size:13px;line-height:1.9}
+.airport-instructions li{padding-left:4px;margin-top:12px;overflow-wrap:anywhere}
+.airport-instructions li::marker{color:var(--guide-accent)}
+.airport-os-choice{margin-top:28px;padding-top:24px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:10px}
+.airport-os-choice label{font-size:12px;font-weight:600}
+.airport-os-choice select{width:100%;max-width:100%;background:var(--raised);color:var(--text);border:1px solid var(--border);border-radius:7px;min-height:46px;padding:10px;font-size:12px}
+.airport-os-panel .text-link{display:block;font-size:11px;color:var(--guide-accent);margin-top:18px}
+.airport-dependencies{font:11px/1.9 ui-monospace,monospace;padding-left:25px;margin-bottom:0;overflow-wrap:anywhere}
+.airport-dependencies li{padding-left:5px;margin-top:5px}
+.airport-roaming-toggle{border-block:1px solid var(--border);margin-top:24px;padding:17px 0;font-size:12px}
+.airport-roaming-toggle summary{cursor:pointer;font-weight:600;color:var(--guide-accent)}
+.airport-roaming-toggle p{font-size:12px;color:var(--muted);line-height:1.9;margin-top:13px;overflow-wrap:anywhere}
+.airport-known-issue{margin-top:0}
+.airport-hardware{min-width:510px}
+@media(max-width:760px){.airport-page .guide-hero{grid-template-columns:1fr}.airport-instructions{font-size:12px}.airport-os-choice select{font-size:11px}}

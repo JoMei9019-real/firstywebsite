@@ -1,7 +1,8 @@
 import { initLanguage, t } from './i18n.js';
-import { initTheme } from './shared.js';
+import { checkGuideRelease, initTheme } from './shared.js';
 initLanguage();
 initTheme();
+checkGuideRelease();
 
 const storageKey = 'jomei-feixiao-1.1.0-guide';
 const checkboxes = [...document.querySelectorAll('[data-step-complete]')];

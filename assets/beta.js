@@ -8,6 +8,7 @@ const status = document.querySelector('#beta-status');
 const filters = document.querySelector('#version-filters');
 const heading = document.querySelector('#series-heading');
 const summary = document.querySelector('#series-summary');
+const releaseLink = document.querySelector('#series-release');
 const search = document.querySelector('#build-search');
 const older = document.querySelector('#load-older');
 const refresh = document.querySelector('#refresh-builds');
@@ -44,6 +45,7 @@ function render() {
   const entries = selected?.builds || [];
   const visible = entries.filter(({ run, artifact }) => `${run.display_title} ${run.head_sha} ${run.head_branch} ${artifact.name}`.toLowerCase().includes(query));
   heading.textContent = selected ? t('{version} beta builds', { version: versionLabel(version) }) : t('Beta builds');
+  releaseLink.hidden = !selected || !isReleasedBeta(version, stableRelease?.tag_name);
   summary.textContent = selected ? t('{count} · Newest first', { count: buildCount(entries.length) }) : '';
   list.setAttribute('aria-busy', 'false');
   if (lastError && !builds.length) {
@@ -75,10 +77,12 @@ async function load(force = false, append = false) {
     page = nextPage;
     builds = betaBuilds(runs, artifacts);
     series = betaSeries(builds);
-    // Keep a deliberate selection on refresh; initially show the most recently
-    // updated series, which may differ from the highest semantic version.
+    // Prefer a series that has not been superseded by a stable release.
+    // Preserve the visitor's choice when refreshing or loading older builds.
     if (!series.some(group => group.version === version)) {
-      version = [...series].sort((a, b) => Date.parse(b.builds[0].run.created_at) - Date.parse(a.builds[0].run.created_at))[0]?.version || null;
+      const byDate = [...series].sort((a, b) => Date.parse(b.builds[0].run.created_at) - Date.parse(a.builds[0].run.created_at));
+      const current = byDate.find(group => group.version !== 'other' && !isReleasedBeta(group.version, stableRelease?.tag_name));
+      version = (current || byDate[0])?.version || null;
     }
     lastSync = { stale: runResult?.stale || artifactResult?.stale, time: runResult?.time || artifactResult?.time };
     lastError = null;

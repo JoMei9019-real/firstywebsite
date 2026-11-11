@@ -1,3 +1,4 @@
+import { compareReleaseVersions, github } from './github.js';
 import { t, locale } from './i18n.js';
 export const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 export function safeURL(value, base = 'https://github.com/') {
@@ -70,4 +71,18 @@ export function initTheme() {
   update();
   const year = document.querySelector('[data-year]');
   if (year) year.textContent = new Date().getFullYear();
+}
+
+
+// Keep the download and instructions pinned to the same release.
+export async function checkGuideRelease() {
+  const notice = document.querySelector('[data-guide-release]');
+  if (!notice) return;
+  try {
+    const { data } = await github(`/${notice.dataset.guideRelease}/releases/latest`);
+    const comparison = compareReleaseVersions(data.tag_name, notice.dataset.guideVersion);
+    notice.hidden = data.draft || data.prerelease || comparison === null || comparison <= 0;
+  } catch {
+    // The versioned guide and its download remain available offline.
+  }
 }

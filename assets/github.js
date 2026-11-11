@@ -115,15 +115,21 @@ export function formatBytes(bytes) {
   return `${(bytes / (1024 * 1024)).toLocaleString(locale(), { maximumFractionDigits: 1 })} MB`;
 }
 
-// A stable release supersedes all betas of the same or an earlier version.
-// Ignore unfamiliar tags rather than guessing their order.
-export function isReleasedBeta(version, stableTag) {
-  const beta = /^(\d+)\.(\d+)\.(\d+)$/.exec(version || '');
-  const stable = /^v?(\d+)\.(\d+)\.(\d+)$/i.exec(stableTag || '');
-  if (!beta || !stable) return false;
+// Return null for unfamiliar tags instead of guessing their order.
+export function compareReleaseVersions(left, right) {
+  const pattern = /^v?(\d+)\.(\d+)\.(\d+)$/i;
+  const a = pattern.exec(left || '');
+  const b = pattern.exec(right || '');
+  if (!a || !b) return null;
   for (let i = 1; i <= 3; i++) {
-    const difference = Number(stable[i]) - Number(beta[i]);
-    if (difference) return difference > 0;
+    const difference = Number(a[i]) - Number(b[i]);
+    if (difference) return difference;
   }
-  return true;
+  return 0;
+}
+
+// A stable release supersedes all betas of the same or an earlier version.
+export function isReleasedBeta(version, stableTag) {
+  const comparison = compareReleaseVersions(version, stableTag);
+  return comparison !== null && comparison <= 0;
 }

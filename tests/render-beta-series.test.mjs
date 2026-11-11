@@ -16,7 +16,11 @@ test('version selection isolates downloads, search and counts and survives refre
   const select = version => filters.trigger('click', { target: { closest: () => ({ dataset: { version } }) } });
   const html = () => page.element('#build-list').innerHTML;
   const settle = async () => { for (let i = 0; i < 10; i++) await new Promise(setImmediate); };
-  // The newest updated series opens, rather than the highest version.
+  // A newer timestamp on a superseded series does not make it the default.
+  assert.match(page.element('#series-heading').textContent, /2\.0\.0/);
+  assert.equal(page.element('#series-release').hidden, true);
+  select('1.1.0');
+  assert.equal(page.element('#series-release').hidden, false);
   assert.match(page.element('#series-heading').textContent, /1\.1\.0/);
   assert.match(html(), /AirPortRTW-1\.1\.0-beta\.7/);
   assert.match(html(), /outdated-label[^>]*>Outdated/);

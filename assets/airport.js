@@ -1,7 +1,8 @@
 import { initLanguage, t } from './i18n.js';
-import { initTheme } from './shared.js';
+import { checkGuideRelease, initTheme } from './shared.js';
 initLanguage();
 initTheme();
+checkGuideRelease();
 
 // Both platform guides remain readable when JavaScript is unavailable.
 const osSelect = document.querySelector('#airport-os');

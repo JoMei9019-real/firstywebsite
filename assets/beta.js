@@ -50,7 +50,7 @@ function render() {
   if (lastError && !series.length) {
     list.innerHTML = `<div class="release-placeholder"><span class="empty-symbol">↗</span><h3>${t('Could not load the builds.')}</h3><p>${e(errorMessage(lastError))}</p><a class="button secondary" href="${root}/actions/workflows/native-build.yml" target="_blank" rel="noopener noreferrer">${t('Open GitHub Actions')} ${arrow}</a></div>`;
   } else if (!visible.length) {
-    list.innerHTML = `<div class="release-placeholder"><span class="empty-symbol">⌁</span><h3>${t(selected ? 'No matching builds.' : 'No current beta builds available.')}</h3><p>${t(selected ? 'Try a different search or version series.' : 'New beta series will appear here after a successful build.')}</p><a class="button secondary" href="${root}/actions/workflows/native-build.yml" target="_blank" rel="noopener noreferrer">${t('View workflow on GitHub')} ${arrow}</a></div>`;
+    list.innerHTML = `<div class="release-placeholder"><span class="empty-symbol wifi-symbol" aria-hidden="true"></span><h3>${t(selected ? 'No matching builds.' : 'No current beta builds available.')}</h3><p>${t(selected ? 'Try a different search or version series.' : 'New beta series will appear here after a successful build.')}</p><a class="button secondary" href="${root}/actions/workflows/native-build.yml" target="_blank" rel="noopener noreferrer">${t('View workflow on GitHub')} ${arrow}</a></div>`;
   } else list.innerHTML = visible.map(entry => renderBuild(entry, entries.indexOf(entry))).join('');
   older.hidden = !(moreRuns || moreArtifacts);
   range.textContent = t('{visible} of {total} builds · Newest first', { visible: visible.length, total: entries.length });
